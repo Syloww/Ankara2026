@@ -797,23 +797,6 @@ button {
   vertical-align: middle;
 }
 
-/* ——— Footer ——— */
-.site-footer {
-  padding: 2rem clamp(1.25rem, 5vw, 4rem) 2.5rem;
-  border-top: 1px solid rgba(230, 238, 244, 0.08);
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--mist-dim);
-}
-
-.site-footer__disclaimer {
-  margin: 0.85rem auto 0;
-  max-width: 42rem;
-  font-size: 0.68rem;
-  line-height: 1.55;
-  opacity: 0.75;
-}
-
 /* ——— Lightbox ——— */
 .lightbox {
   border: none;

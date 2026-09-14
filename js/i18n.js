@@ -25,9 +25,6 @@ window.I18N = {
     lightboxPrev: "Précédente",
     lightboxNext: "Suivante",
     download: "Télécharger",
-    footer: "Projet Erasmus · Ankara 2026 · Galerie photo",
-    footerDisclaimer:
-      "Ce projet a été financé avec le soutien de l'Union européenne. Le contenu de cette publication n'engage que son auteur et la Commission européenne ne peut être tenue responsable de l'usage qui pourrait être fait des informations qui y figurent.",
     scroll: "Défiler",
   },
   en: {
@@ -56,9 +53,6 @@ window.I18N = {
     lightboxPrev: "Previous",
     lightboxNext: "Next",
     download: "Download",
-    footer: "Erasmus project · Ankara 2026 · Photo gallery",
-    footerDisclaimer:
-      "This project has been funded with support from the European Union. This publication reflects the views only of the author, and the European Commission cannot be held responsible for any use which may be made of the information contained therein.",
     scroll: "Scroll",
   },
   tr: {
@@ -87,9 +81,6 @@ window.I18N = {
     lightboxPrev: "Önceki",
     lightboxNext: "Sonraki",
     download: "İndir",
-    footer: "Erasmus projesi · Ankara 2026 · Fotoğraf galerisi",
-    footerDisclaimer:
-      "Bu proje Avrupa Birliği'nin desteğiyle finanse edilmiştir. Yayının içeriği yalnızca yazarın görüşlerini yansıtır; Avrupa Komisyonu burada yer alan bilgilerin herhangi bir şekilde kullanılmasından sorumlu tutulamaz.",
     scroll: "Kaydır",
   },
 };
