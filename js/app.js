@@ -15,7 +15,6 @@
 
   const els = {
     intro: document.getElementById("intro"),
-    skipIntro: document.getElementById("skip-intro"),
     header: document.querySelector(".site-header"),
     filters: document.getElementById("filters"),
     gallery: document.getElementById("gallery"),
@@ -234,8 +233,6 @@
   }
 
   function bindEvents() {
-    els.skipIntro.addEventListener("click", endIntro);
-
     els.langBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         state.lang = btn.dataset.lang;
