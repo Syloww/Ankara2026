@@ -22,7 +22,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
     />
-    <link rel="stylesheet" href="css/styles.css?v=12" />
+    <link rel="stylesheet" href="css/styles.css?v=13" />
   </head>
   <body>
     <!-- Intro wow -->
@@ -124,12 +124,18 @@
       <button type="button" class="lightbox__close" id="lightbox-close" data-i18n-aria="lightboxClose">×</button>
       <button type="button" class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" data-i18n-aria="lightboxPrev">‹</button>
       <img id="lightbox-img" alt="" decoding="async" />
+      <a class="lightbox__download" id="lightbox-download" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span data-i18n="download">Télécharger</span>
+      </a>
       <button type="button" class="lightbox__nav lightbox__nav--next" id="lightbox-next" data-i18n-aria="lightboxNext">›</button>
     </dialog>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" defer></script>
-    <script src="js/i18n.js?v=10" defer></script>
-    <script src="js/app.js?v=10" defer></script>
+    <script src="js/i18n.js?v=13" defer></script>
+    <script src="js/app.js?v=13" defer></script>
   </body>
 </html>

@@ -90,6 +90,7 @@
       count: document.getElementById("photo-count"),
       lightbox: document.getElementById("lightbox"),
       lightboxImg: document.getElementById("lightbox-img"),
+      lightboxDownload: document.getElementById("lightbox-download"),
       lightboxClose: document.getElementById("lightbox-close"),
       lightboxPrev: document.getElementById("lightbox-prev"),
       lightboxNext: document.getElementById("lightbox-next"),
@@ -444,6 +445,13 @@
     updateCount();
   }
 
+  function syncLightboxDownload(photo) {
+    if (!els.lightboxDownload || !photo) return;
+    els.lightboxDownload.href = photo.src;
+    els.lightboxDownload.download = fileNameFromSrc(photo.src);
+    els.lightboxDownload.onclick = (e) => downloadPhoto(photo.src, e);
+  }
+
   function openLightbox(index) {
     if (!els.lightbox || !els.lightboxImg) return;
     state.lightboxIndex = index;
@@ -451,6 +459,7 @@
     if (!photo) return;
     els.lightboxImg.src = photo.src;
     els.lightboxImg.alt = photo.album || "";
+    syncLightboxDownload(photo);
     document.body.classList.add("is-lightbox-open");
     if (typeof els.lightbox.showModal === "function") {
       els.lightbox.showModal();
@@ -477,6 +486,7 @@
     const photo = state.visible[state.lightboxIndex];
     els.lightboxImg.src = photo.src;
     els.lightboxImg.alt = photo.album || "";
+    syncLightboxDownload(photo);
   }
 
   function preloadBackground(url) {

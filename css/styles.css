@@ -825,11 +825,40 @@ button {
   width: auto;
   height: auto;
   max-width: min(96vw, 100%);
-  max-height: calc(100vh - 4.5rem);
-  max-height: calc(100dvh - 4.5rem);
-  margin: 2.25rem 0;
+  max-height: calc(100vh - 7rem);
+  max-height: calc(100dvh - 7rem);
+  margin: 2.25rem 0 5rem;
   object-fit: contain;
   box-shadow: none;
+}
+
+.lightbox__download {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.15rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--gold);
+  border-radius: 2px;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.lightbox__download:hover {
+  background: #efc56e;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.lightbox__download svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .lightbox__close {
