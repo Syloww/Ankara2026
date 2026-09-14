@@ -3,20 +3,21 @@
 
   const INTRO_MS = 3200;
   const STORAGE_LANG = "ankara2026-lang";
-  const HERO_PHOTO = "Photos/Elvan/P1031897.jpg";
-  const ABOUT_PHOTO = "Photos/Elvan/P1032011.jpg";
   const PLACEHOLDER =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%230a1520'/%3E%3C/svg%3E";
 
   const state = {
     lang: readStoredLang() || detectLang(),
     filter: "all",
+    albums: [],
     items: [],
     visible: [],
     lightboxIndex: 0,
     rellax: null,
     lazyObserver: null,
     galleryReady: false,
+    heroPhoto: null,
+    aboutPhoto: null,
   };
 
   /** @type {Record<string, any>} */
@@ -76,7 +77,33 @@
   }
 
   function fileNameFromSrc(src) {
-    return src.split("/").pop() || "photo.jpg";
+    try {
+      return decodeURIComponent(src.split("/").pop() || "photo.jpg");
+    } catch {
+      return src.split("/").pop() || "photo.jpg";
+    }
+  }
+
+  /** Chemin public depuis la racine du site (/Photos/...) */
+  function toPublicUrl(src) {
+    const cleaned = String(src).replace(/^\/+/, "");
+    return (
+      "/" +
+      cleaned
+        .split("/")
+        .map((part) => encodeURIComponent(part))
+        .join("/")
+    );
+  }
+
+  /** URL absolue pour background-image CSS (évite le 404 css/Photos/...) */
+  function toCssImage(src) {
+    const path = src.startsWith("/") ? src : toPublicUrl(src);
+    try {
+      return `url("${new URL(path, window.location.href).href}")`;
+    } catch {
+      return `url("${path}")`;
+    }
   }
 
   function downloadIcon() {
@@ -116,20 +143,38 @@
     return a;
   }
 
-  function buildCatalog() {
-    const albums = (window.PHOTOS_DATA && window.PHOTOS_DATA.albums) || [];
+  async function fetchPhotosCatalog() {
+    const endpoints = ["/api/photos", "photos.json"];
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (data && Array.isArray(data.albums)) return data;
+      } catch {
+        /* essaie la source suivante */
+      }
+    }
+    return { albums: [] };
+  }
+
+  function applyCatalog(data) {
+    state.albums = (data && data.albums) || [];
     const items = [];
-    albums.forEach((album) => {
+    state.albums.forEach((album) => {
       (album.photos || []).forEach((src) => {
-        items.push({ src, album: album.id });
+        items.push({ src: toPublicUrl(src), album: album.id });
       });
     });
     state.items = items;
+
+    const allSrc = items.map((p) => p.src);
+    state.heroPhoto = allSrc[0] || null;
+    state.aboutPhoto = allSrc[Math.min(1, allSrc.length - 1)] || state.heroPhoto;
   }
 
   function buildFilters() {
     if (!els.filters) return;
-    const albums = (window.PHOTOS_DATA && window.PHOTOS_DATA.albums) || [];
     els.filters.innerHTML = "";
 
     const allBtn = document.createElement("button");
@@ -140,7 +185,7 @@
     on(allBtn, "click", () => setFilter("all"));
     els.filters.appendChild(allBtn);
 
-    albums.forEach((album) => {
+    state.albums.forEach((album) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "filter-btn";
@@ -385,19 +430,32 @@
   }
 
   async function loadDeferredMedia() {
-    await preloadBackground(HERO_PHOTO);
+    const hero = state.heroPhoto;
+    const about = state.aboutPhoto;
+    if (!hero) return;
+
+    const heroGradient =
+      "linear-gradient(160deg, rgba(7, 16, 24, 0.35) 0%, rgba(7, 16, 24, 0.75) 55%, #071018 100%)";
+    const aboutGradient =
+      "linear-gradient(to right, rgba(7, 16, 24, 0.92) 0%, rgba(7, 16, 24, 0.55) 100%)";
+
+    await preloadBackground(hero);
     if (els.heroBg) {
-      els.heroBg.style.setProperty("--hero-photo", `url("${HERO_PHOTO}")`);
+      els.heroBg.style.backgroundImage = `${heroGradient}, ${toCssImage(hero)}`;
       els.heroBg.classList.add("is-loaded");
     }
 
     const aboutTarget = els.aboutBg;
-    if (!aboutTarget || !("IntersectionObserver" in window)) {
-      if (aboutTarget) {
-        await preloadBackground(ABOUT_PHOTO);
-        aboutTarget.style.setProperty("--about-photo", `url("${ABOUT_PHOTO}")`);
-        aboutTarget.classList.add("is-loaded");
-      }
+    if (!aboutTarget || !about) return;
+
+    const applyAbout = async () => {
+      await preloadBackground(about);
+      aboutTarget.style.backgroundImage = `${aboutGradient}, ${toCssImage(about)}`;
+      aboutTarget.classList.add("is-loaded");
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      await applyAbout();
       return;
     }
 
@@ -405,9 +463,7 @@
       async (entries, obs) => {
         if (!entries.some((e) => e.isIntersecting)) return;
         obs.disconnect();
-        await preloadBackground(ABOUT_PHOTO);
-        aboutTarget.style.setProperty("--about-photo", `url("${ABOUT_PHOTO}")`);
-        aboutTarget.classList.add("is-loaded");
+        await applyAbout();
       },
       { rootMargin: "300px 0px" }
     );
@@ -489,14 +545,17 @@
     });
   }
 
-  function init() {
+  async function init() {
     cacheElements();
     document.body.classList.add("is-intro-locked");
-    buildCatalog();
+    bindEvents();
+
+    const data = await fetchPhotosCatalog();
+    applyCatalog(data);
     buildFilters();
     applyI18n();
     if (els.count) els.count.textContent = "";
-    bindEvents();
+
     window.setTimeout(endIntro, INTRO_MS);
   }
 

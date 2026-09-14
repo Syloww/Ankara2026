@@ -1,0 +1,47 @@
+{
+  "albums": [
+    {
+      "id": "Busra",
+      "photos": [
+        "Photos/Busra/1cef1856-d0c1-4b51-a0a1-ff6f35e12314.png",
+        "Photos/Busra/P1031433.jpg"
+      ]
+    },
+    {
+      "id": "divers",
+      "photos": [
+        "Photos/divers/P1031423.jpg",
+        "Photos/divers/P1031943.jpg"
+      ]
+    },
+    {
+      "id": "Elvan",
+      "photos": [
+        "Photos/Elvan/P1031897-2.jpg",
+        "Photos/Elvan/P1031897.jpg",
+        "Photos/Elvan/P1032007.jpg",
+        "Photos/Elvan/P1032011.jpg",
+        "Photos/Elvan/P1032041.jpg"
+      ]
+    },
+    {
+      "id": "Eren",
+      "photos": [
+        "Photos/Eren/P1031389.jpg"
+      ]
+    },
+    {
+      "id": "Eren & Furkan",
+      "photos": [
+        "Photos/Eren & Furkan/P1031408.jpg"
+      ]
+    },
+    {
+      "id": "Quentin",
+      "photos": [
+        "Photos/Quentin/P1031387.jpg"
+      ]
+    }
+  ],
+  "generatedAt": "2026-09-14T12:03:47.599Z"
+}

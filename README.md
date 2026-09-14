@@ -1,28 +1,28 @@
 # Ankara 2026 — Galerie Erasmus
 
-Site statique (HTML / CSS / JS) pour parcourir les albums du dossier `Photos/`.
+Site HTML / CSS / JS : chaque sous-dossier de `Photos/` devient un album / filtre, détecté automatiquement.
 
 ## Lancer le site
 
-Ouvrir `index.html` dans le navigateur, ou servir le dossier en local :
-
 ```bash
-npx serve .
+npm start
 ```
 
-Puis ouvrir l’URL affichée (souvent `http://localhost:3000`).
+Puis ouvrir **http://localhost:3456**
+
+Le serveur scanne `Photos/` à chaque appel de `/api/photos` : déposez des images dans un dossier, rechargez la page.
 
 ## Albums & filtres
 
-- Chaque **sous-dossier** de `Photos/` = un album / filtre (`Busra`, `divers`, `Elvan`, …).
-- Par défaut : **toutes** les photos, dans un **ordre aléatoire**.
-- Après ajout de fichiers, mettez à jour `js/photos-data.js`.
+- `Photos/NomAlbum/*.jpg|png|webp…` → album **NomAlbum**
+- Par défaut : toutes les photos, ordre aléatoire
+- Plus besoin d’éditer un fichier catalogue à la main
 
 ## Langues
 
-Français · English · Türkçe (sélecteur FR / EN / TR en haut à droite).
+Français · English · Türkçe
 
 ## Effets
 
-- **WOW.js** + Animate.css : animations à l’arrivée / au scroll
-- **Rellax.js** : parallax sur le hero et la section projet
+- **WOW.js** + Animate.css
+- **Rellax.js** (parallax)

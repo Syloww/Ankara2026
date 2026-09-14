@@ -1,0 +1,11 @@
+{
+  "name": "ankara2026",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Galerie photo Erasmus Ankara 2026",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "scan": "node -e \"import { scanPhotos, writePhotosJson } from './scan-photos.mjs'; const d=scanPhotos(process.cwd()); writePhotosJson(process.cwd(), d); console.log(JSON.stringify(d,null,2));\""
+  }
+}

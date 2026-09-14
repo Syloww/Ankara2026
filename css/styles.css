@@ -294,12 +294,6 @@ button {
   will-change: transform;
 }
 
-.hero__bg.is-loaded {
-  background-image:
-    linear-gradient(160deg, rgba(7, 16, 24, 0.35) 0%, rgba(7, 16, 24, 0.75) 55%, var(--ink) 100%),
-    var(--hero-photo);
-}
-
 .hero__orb {
   position: absolute;
   border-radius: 50%;
@@ -649,12 +643,6 @@ button {
   background-position: center;
   background-repeat: no-repeat;
   will-change: transform;
-}
-
-.about__parallax.is-loaded {
-  background-image:
-    linear-gradient(to right, rgba(7, 16, 24, 0.92) 0%, rgba(7, 16, 24, 0.55) 100%),
-    var(--about-photo);
 }
 
 .about__inner {
