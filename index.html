@@ -105,15 +105,23 @@
     <dialog class="lightbox" id="lightbox" aria-label="Aperçu photo">
       <button type="button" class="lightbox__close" id="lightbox-close" data-i18n-aria="lightboxClose">×</button>
       <button type="button" class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" data-i18n-aria="lightboxPrev">‹</button>
-      <img id="lightbox-img" alt="" />
+      <img id="lightbox-img" alt="" decoding="async" />
       <p class="lightbox__caption" id="lightbox-caption"></p>
+      <div class="lightbox__actions">
+        <a class="lightbox__download" id="lightbox-download" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span data-i18n="download">Télécharger</span>
+        </a>
+      </div>
       <button type="button" class="lightbox__nav lightbox__nav--next" id="lightbox-next" data-i18n-aria="lightboxNext">›</button>
     </dialog>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
-    <script src="js/photos-data.js"></script>
-    <script src="js/i18n.js"></script>
-    <script src="js/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" defer></script>
+    <script src="js/photos-data.js" defer></script>
+    <script src="js/i18n.js" defer></script>
+    <script src="js/app.js" defer></script>
   </body>
 </html>
