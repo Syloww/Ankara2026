@@ -2,7 +2,7 @@
   "use strict";
 
   const INTRO_MS = 3200;
-  const STORAGE_LANG = "ankara2026-lang";
+  const STORAGE_LANG = "ankara2026-lang-v2";
   const PLACEHOLDER =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%230a1520'/%3E%3C/svg%3E";
 
@@ -72,9 +72,7 @@
   }
 
   function detectLang() {
-    const nav = (navigator.language || "fr").slice(0, 2).toLowerCase();
-    if (nav === "tr" || nav === "en" || nav === "fr") return nav;
-    return "fr";
+    return "en";
   }
 
   function cacheElements() {
