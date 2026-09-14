@@ -33,6 +33,7 @@ function sendJson(res, status, data) {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
     "Access-Control-Allow-Origin": "*",
+    "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet, noimageindex",
   });
   res.end(body);
 }
@@ -54,6 +55,7 @@ function serveFile(res, filePath) {
     "Cache-Control": ext.match(/\.(jpe?g|png|gif|webp|avif)$/)
       ? "public, max-age=86400"
       : "no-cache",
+    "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet, noimageindex",
   });
   stream.pipe(res);
   stream.on("error", () => {
