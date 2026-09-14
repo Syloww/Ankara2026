@@ -1,28 +1,25 @@
 # Ankara 2026 — Galerie Erasmus
 
-Site HTML / CSS / JS : chaque sous-dossier de `Photos/` devient un album / filtre, détecté automatiquement.
+Site HTML / CSS / JS : chaque sous-dossier de `Photos/` devient un album / filtre.
 
-## Lancer le site
+## Local
 
 ```bash
 npm start
 ```
 
-Puis ouvrir **http://localhost:3456**
+→ http://localhost:3456  
+Le serveur scanne `Photos/` via `/api/photos`.
 
-Le serveur scanne `Photos/` à chaque appel de `/api/photos` : déposez des images dans un dossier, rechargez la page.
+## GitHub Pages
 
-## Albums & filtres
+Sur https://syloww.github.io/Ankara2026/ le site est **statique** :
 
-- `Photos/NomAlbum/*.jpg|png|webp…` → album **NomAlbum**
-- Par défaut : toutes les photos, ordre aléatoire
-- Plus besoin d’éditer un fichier catalogue à la main
+1. Lancer `npm start` une fois (ou `npm run scan`) pour générer `photos.json`
+2. Commit + push de `photos.json` et des fichiers dans `Photos/`
+3. Les chemins d’images utilisent automatiquement le préfixe `/Ankara2026/`
 
-## Langues
+## Albums
 
-Français · English · Türkçe
-
-## Effets
-
-- **WOW.js** + Animate.css
-- **Rellax.js** (parallax)
+- `Photos/NomAlbum/*` → filtre **NomAlbum**
+- Formats : jpg, png, webp, gif, avif…

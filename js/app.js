@@ -6,6 +6,9 @@
   const PLACEHOLDER =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%230a1520'/%3E%3C/svg%3E";
 
+  /** Préfixe du site (/ sur localhost, /Ankara2026/ sur GitHub Pages) */
+  const BASE_PATH = detectBasePath();
+
   const state = {
     lang: readStoredLang() || detectLang(),
     filter: "all",
@@ -22,6 +25,32 @@
 
   /** @type {Record<string, any>} */
   let els = {};
+
+  function detectBasePath() {
+    const baseTag = document.querySelector("base[href]");
+    if (baseTag) {
+      try {
+        const u = new URL(baseTag.getAttribute("href"), window.location.href);
+        let p = u.pathname;
+        if (!p.endsWith("/")) p += "/";
+        return p;
+      } catch {
+        /* ignore */
+      }
+    }
+    let path = window.location.pathname || "/";
+    if (/\.html?$/i.test(path)) {
+      path = path.replace(/[^/]+$/, "");
+    } else if (!path.endsWith("/")) {
+      path += "/";
+    }
+    return path || "/";
+  }
+
+  function withBase(relativePath) {
+    const cleaned = String(relativePath).replace(/^\/+/, "");
+    return BASE_PATH + cleaned;
+  }
 
   function readStoredLang() {
     try {
@@ -84,25 +113,25 @@
     }
   }
 
-  /** Chemin public depuis la racine du site (/Photos/...) */
+  /** Chemin public compatible GitHub Pages (/Ankara2026/Photos/...) */
   function toPublicUrl(src) {
     const cleaned = String(src).replace(/^\/+/, "");
-    return (
-      "/" +
-      cleaned
-        .split("/")
-        .map((part) => encodeURIComponent(part))
-        .join("/")
-    );
+    const encoded = cleaned
+      .split("/")
+      .map((part) => encodeURIComponent(part))
+      .join("/");
+    return withBase(encoded);
   }
 
-  /** URL absolue pour background-image CSS (évite le 404 css/Photos/...) */
+  /** URL absolue pour background-image CSS */
   function toCssImage(src) {
-    const path = src.startsWith("/") ? src : toPublicUrl(src);
     try {
-      return `url("${new URL(path, window.location.href).href}")`;
+      const absolute = /^https?:\/\//i.test(src)
+        ? src
+        : new URL(src.startsWith("/") ? src : toPublicUrl(src), window.location.origin).href;
+      return `url("${absolute}")`;
     } catch {
-      return `url("${path}")`;
+      return `url("${src}")`;
     }
   }
 
@@ -144,7 +173,8 @@
   }
 
   async function fetchPhotosCatalog() {
-    const endpoints = ["/api/photos", "photos.json"];
+    // photos.json d'abord (GitHub Pages), puis API locale
+    const endpoints = [withBase("photos.json"), withBase("api/photos"), "/api/photos"];
     for (const url of endpoints) {
       try {
         const res = await fetch(url, { cache: "no-store" });
@@ -163,7 +193,9 @@
     const items = [];
     state.albums.forEach((album) => {
       (album.photos || []).forEach((src) => {
-        items.push({ src: toPublicUrl(src), album: album.id });
+        // photos.json contient "Photos/...", toPublicUrl ajoute le bon préfixe
+        const raw = String(src).replace(/^\/+/, "");
+        items.push({ src: toPublicUrl(raw), album: album.id });
       });
     });
     state.items = items;
