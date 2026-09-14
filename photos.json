@@ -3,45 +3,93 @@
     {
       "id": "Busra",
       "photos": [
-        "Photos/Busra/1cef1856-d0c1-4b51-a0a1-ff6f35e12314.png",
-        "Photos/Busra/P1031433.jpg"
+        {
+          "src": "Photos/Busra/1cef1856-d0c1-4b51-a0a1-ff6f35e12314.png",
+          "width": 939,
+          "height": 1674
+        },
+        {
+          "src": "Photos/Busra/P1031433.jpg",
+          "width": 5188,
+          "height": 2912
+        }
       ]
     },
     {
       "id": "divers",
       "photos": [
-        "Photos/divers/P1031423.jpg",
-        "Photos/divers/P1031943.jpg"
+        {
+          "src": "Photos/divers/P1031423.jpg",
+          "width": 2994,
+          "height": 5333
+        },
+        {
+          "src": "Photos/divers/P1031943.jpg",
+          "width": 2250,
+          "height": 4000
+        }
       ]
     },
     {
       "id": "Elvan",
       "photos": [
-        "Photos/Elvan/P1031897-2.jpg",
-        "Photos/Elvan/P1031897.jpg",
-        "Photos/Elvan/P1032007.jpg",
-        "Photos/Elvan/P1032011.jpg",
-        "Photos/Elvan/P1032041.jpg"
+        {
+          "src": "Photos/Elvan/P1031897-2.jpg",
+          "width": 1823,
+          "height": 3247
+        },
+        {
+          "src": "Photos/Elvan/P1031897.jpg",
+          "width": 5704,
+          "height": 3202
+        },
+        {
+          "src": "Photos/Elvan/P1032007.jpg",
+          "width": 3368,
+          "height": 6000
+        },
+        {
+          "src": "Photos/Elvan/P1032011.jpg",
+          "width": 3368,
+          "height": 5988
+        },
+        {
+          "src": "Photos/Elvan/P1032041.jpg",
+          "width": 2048,
+          "height": 1150
+        }
       ]
     },
     {
       "id": "Eren",
       "photos": [
-        "Photos/Eren/P1031389.jpg"
+        {
+          "src": "Photos/Eren/P1031389.jpg",
+          "width": 1150,
+          "height": 2048
+        }
       ]
     },
     {
       "id": "Eren & Furkan",
       "photos": [
-        "Photos/Eren & Furkan/P1031408.jpg"
+        {
+          "src": "Photos/Eren & Furkan/P1031408.jpg",
+          "width": 4210,
+          "height": 2363
+        }
       ]
     },
     {
       "id": "Quentin",
       "photos": [
-        "Photos/Quentin/P1031387.jpg"
+        {
+          "src": "Photos/Quentin/P1031387.jpg",
+          "width": 4429,
+          "height": 2486
+        }
       ]
     }
   ],
-  "generatedAt": "2026-09-14T12:03:47.599Z"
+  "generatedAt": "2026-09-14T12:14:46.154Z"
 }

@@ -567,7 +567,53 @@ button {
   transform: translateY(24px);
   animation: cardIn 0.7s var(--ease-out) forwards;
   content-visibility: auto;
-  contain-intrinsic-size: 280px;
+  contain-intrinsic-size: auto 320px;
+}
+
+.photo-card__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--photo-ratio, 4 / 3);
+  overflow: hidden;
+  background: #0a1520;
+}
+
+.photo-card__skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    110deg,
+    #0a1520 0%,
+    #132433 35%,
+    #1a3344 50%,
+    #132433 65%,
+    #0a1520 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShine 1.35s ease-in-out infinite;
+  transition: opacity 0.35s ease;
+}
+
+.photo-card__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: -0.875rem 0 0 -0.875rem;
+  border: 2px solid rgba(230, 238, 244, 0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spinLoader 0.7s linear infinite;
+  transition: opacity 0.3s ease;
+}
+
+.photo-card.is-ready .photo-card__skeleton,
+.photo-card.is-ready .photo-card__spinner {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .photo-card.is-ready img {
@@ -575,9 +621,11 @@ button {
 }
 
 .photo-card img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  vertical-align: middle;
+  height: 100%;
+  object-fit: cover;
   opacity: 0;
   transition: transform 0.7s var(--ease-out), filter 0.5s, opacity 0.45s ease;
   filter: saturate(0.92) contrast(1.02);
@@ -586,6 +634,21 @@ button {
 .photo-card:hover img {
   transform: scale(1.04);
   filter: saturate(1.05) contrast(1.05);
+}
+
+@keyframes skeletonShine {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes spinLoader {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .photo-card__badge {
@@ -832,6 +895,11 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .hero__slide {
     transition: none;
+  }
+
+  .photo-card__skeleton,
+  .photo-card__spinner {
+    animation: none;
   }
 
   *,

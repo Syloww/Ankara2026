@@ -196,10 +196,21 @@
     state.albums = (data && data.albums) || [];
     const items = [];
     state.albums.forEach((album) => {
-      (album.photos || []).forEach((src) => {
-        // photos.json contient "Photos/...", toPublicUrl ajoute le bon préfixe
-        const raw = String(src).replace(/^\/+/, "");
-        items.push({ src: toPublicUrl(raw), album: album.id });
+      (album.photos || []).forEach((entry) => {
+        const rawPath =
+          typeof entry === "string" ? entry : entry && entry.src ? entry.src : "";
+        if (!rawPath) return;
+        const raw = String(rawPath).replace(/^\/+/, "");
+        const width =
+          typeof entry === "object" && entry.width ? Number(entry.width) : 4;
+        const height =
+          typeof entry === "object" && entry.height ? Number(entry.height) : 3;
+        items.push({
+          src: toPublicUrl(raw),
+          album: album.id,
+          width,
+          height,
+        });
       });
     });
     state.items = items;
@@ -269,6 +280,13 @@
     }
   }
 
+  function markCardReady(img) {
+    const card = img.closest(".photo-card");
+    if (!card) return;
+    card.classList.add("is-ready");
+    card.classList.remove("is-loading");
+  }
+
   function createLazyObserver() {
     destroyLazyObserver();
     if (!("IntersectionObserver" in window)) return null;
@@ -283,26 +301,22 @@
             observer.unobserve(img);
             return;
           }
-          const reveal = () => {
-            img.closest(".photo-card")?.classList.add("is-ready");
-          };
-          on(img, "load", reveal, { once: true });
+          on(img, "load", () => markCardReady(img), { once: true });
+          on(img, "error", () => markCardReady(img), { once: true });
           img.src = src;
           img.removeAttribute("data-src");
           observer.unobserve(img);
         });
       },
-      { rootMargin: "200px 0px", threshold: 0.01 }
+      { rootMargin: "240px 0px", threshold: 0.01 }
     );
 
     return state.lazyObserver;
   }
 
   function loadImageEager(img, src) {
-    const reveal = () => {
-      img.closest(".photo-card")?.classList.add("is-ready");
-    };
-    on(img, "load", reveal, { once: true });
+    on(img, "load", () => markCardReady(img), { once: true });
+    on(img, "error", () => markCardReady(img), { once: true });
     img.src = src;
     img.loading = "eager";
     img.fetchPriority = "high";
@@ -362,22 +376,40 @@
     const observer = createLazyObserver();
 
     list.forEach((photo, index) => {
+      const w = photo.width || 4;
+      const h = photo.height || 3;
+
       const card = document.createElement("article");
-      card.className = "photo-card";
+      card.className = "photo-card is-loading";
       card.style.animationDelay = `${(index % 12) * 0.04}s`;
+      card.style.setProperty("--photo-ratio", `${w} / ${h}`);
       card.tabIndex = 0;
       card.setAttribute("role", "button");
       card.setAttribute("aria-label", photo.album);
 
+      const frame = document.createElement("div");
+      frame.className = "photo-card__frame";
+
+      const skeleton = document.createElement("div");
+      skeleton.className = "photo-card__skeleton";
+      skeleton.setAttribute("aria-hidden", "true");
+
+      const spinner = document.createElement("div");
+      spinner.className = "photo-card__spinner";
+      spinner.setAttribute("aria-hidden", "true");
+
       const img = document.createElement("img");
       img.alt = photo.album;
       img.decoding = "async";
-      img.src = PLACEHOLDER;
+      img.width = w;
+      img.height = h;
+      img.sizes = "(min-width: 1200px) 25vw, (min-width: 900px) 33vw, (min-width: 560px) 50vw, 100vw";
 
       const eagerCount = window.matchMedia("(min-width: 900px)").matches ? 4 : 2;
       if (index < eagerCount) {
         loadImageEager(img, photo.src);
       } else if (observer) {
+        img.src = PLACEHOLDER;
         img.dataset.src = photo.src;
         img.loading = "lazy";
         observer.observe(img);
@@ -386,7 +418,10 @@
         loadImageEager(img, photo.src);
       }
 
-      card.appendChild(img);
+      frame.appendChild(skeleton);
+      frame.appendChild(spinner);
+      frame.appendChild(img);
+      card.appendChild(frame);
       card.appendChild(createDownloadButton(photo.src));
 
       const badge = document.createElement("span");

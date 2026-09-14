@@ -7,5 +7,8 @@
   "scripts": {
     "start": "node server.mjs",
     "scan": "node -e \"import { scanPhotos, writePhotosJson } from './scan-photos.mjs'; const d=scanPhotos(process.cwd()); writePhotosJson(process.cwd(), d); console.log(JSON.stringify(d,null,2));\""
+  },
+  "dependencies": {
+    "image-size": "^2.0.2"
   }
 }
