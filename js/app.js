@@ -3,6 +3,10 @@
 
   const INTRO_MS = 3200;
   const STORAGE_LANG = "ankara2026-lang";
+  const HERO_PHOTO = "Photos/Elvan/P1031897.jpg";
+  const ABOUT_PHOTO = "Photos/Elvan/P1032011.jpg";
+  const PLACEHOLDER =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%230a1520'/%3E%3C/svg%3E";
 
   const state = {
     lang: localStorage.getItem(STORAGE_LANG) || detectLang(),
@@ -11,11 +15,15 @@
     visible: [],
     lightboxIndex: 0,
     rellax: null,
+    lazyObserver: null,
+    galleryReady: false,
   };
 
   const els = {
     intro: document.getElementById("intro"),
     header: document.querySelector(".site-header"),
+    heroBg: document.querySelector(".hero__bg"),
+    aboutBg: document.querySelector(".about__parallax"),
     filters: document.getElementById("filters"),
     gallery: document.getElementById("gallery"),
     hint: document.getElementById("filter-hint"),
@@ -23,6 +31,7 @@
     lightbox: document.getElementById("lightbox"),
     lightboxImg: document.getElementById("lightbox-img"),
     lightboxCaption: document.getElementById("lightbox-caption"),
+    lightboxDownload: document.getElementById("lightbox-download"),
     lightboxClose: document.getElementById("lightbox-close"),
     lightboxPrev: document.getElementById("lightbox-prev"),
     lightboxNext: document.getElementById("lightbox-next"),
@@ -40,6 +49,14 @@
     return dict[key] || window.I18N.fr[key] || key;
   }
 
+  function fileNameFromSrc(src) {
+    return src.split("/").pop() || "photo.jpg";
+  }
+
+  function downloadIcon() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
   function applyI18n() {
     document.documentElement.lang = state.lang;
     document.querySelectorAll("[data-i18n]").forEach((node) => {
@@ -52,6 +69,11 @@
     });
     els.langBtns.forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.lang === state.lang);
+    });
+    els.gallery.querySelectorAll(".photo-card__download").forEach((btn) => {
+      btn.setAttribute("aria-label", t("download"));
+      const label = btn.querySelector(".photo-card__download-label");
+      if (label) label.textContent = t("download");
     });
     updateHint();
     updateCount();
@@ -111,7 +133,7 @@
       btn.classList.toggle("is-active", btn.dataset.filter === id);
     });
     updateHint();
-    renderGallery();
+    if (state.galleryReady) renderGallery();
   }
 
   function updateHint() {
@@ -121,42 +143,147 @@
   }
 
   function updateCount() {
-    if (!els.count) return;
+    if (!els.count || !state.galleryReady) return;
     const n = state.visible.length;
     const key = n === 1 ? "countPhoto" : "countPhotos";
     els.count.textContent = t(key).replace("{n}", String(n));
   }
 
+  function destroyLazyObserver() {
+    if (state.lazyObserver) {
+      state.lazyObserver.disconnect();
+      state.lazyObserver = null;
+    }
+  }
+
+  function createLazyObserver() {
+    destroyLazyObserver();
+    if (!("IntersectionObserver" in window)) return null;
+
+    state.lazyObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const img = entry.target;
+          const src = img.dataset.src;
+          if (!src) {
+            observer.unobserve(img);
+            return;
+          }
+          const reveal = () => {
+            img.classList.add("is-decoded");
+            img.closest(".photo-card")?.classList.add("is-ready");
+          };
+          img.addEventListener("load", reveal, { once: true });
+          img.src = src;
+          img.removeAttribute("data-src");
+          observer.unobserve(img);
+        });
+      },
+      { rootMargin: "200px 0px", threshold: 0.01 }
+    );
+
+    return state.lazyObserver;
+  }
+
+  function loadImageEager(img, src) {
+    const reveal = () => {
+      img.closest(".photo-card")?.classList.add("is-ready");
+    };
+    img.addEventListener("load", reveal, { once: true });
+    img.src = src;
+    img.loading = "eager";
+    img.fetchPriority = "high";
+  }
+
+  async function downloadPhoto(src, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const name = fileNameFromSrc(src);
+    try {
+      const res = await fetch(src, { cache: "force-cache" });
+      if (!res.ok) throw new Error("fetch failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = name;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+  }
+
+  function createDownloadButton(src) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "photo-card__download";
+    btn.setAttribute("aria-label", t("download"));
+    btn.innerHTML = `${downloadIcon()}<span class="photo-card__download-label">${t("download")}</span>`;
+    btn.addEventListener("click", (e) => downloadPhoto(src, e));
+    return btn;
+  }
+
   function renderGallery() {
-    let list =
+    const list =
       state.filter === "all"
         ? shuffle(state.items)
         : state.items.filter((p) => p.album === state.filter);
 
     state.visible = list;
+    destroyLazyObserver();
     els.gallery.innerHTML = "";
+
+    const observer = createLazyObserver();
 
     list.forEach((photo, index) => {
       const card = document.createElement("article");
       card.className = "photo-card";
-      card.style.animationDelay = `${(index % 12) * 0.05}s`;
+      card.style.animationDelay = `${(index % 12) * 0.04}s`;
       card.tabIndex = 0;
       card.setAttribute("role", "button");
-      card.setAttribute("aria-label", `${photo.album}`);
+      card.setAttribute("aria-label", photo.album);
 
       const img = document.createElement("img");
-      img.src = photo.src;
       img.alt = photo.album;
-      img.loading = "lazy";
       img.decoding = "async";
+      img.src = PLACEHOLDER;
+
+      const eagerCount = window.matchMedia("(min-width: 900px)").matches ? 4 : 2;
+      if (index < eagerCount) {
+        loadImageEager(img, photo.src);
+      } else if (observer) {
+        img.dataset.src = photo.src;
+        img.loading = "lazy";
+        observer.observe(img);
+      } else {
+        img.loading = "lazy";
+        loadImageEager(img, photo.src);
+      }
+
+      card.appendChild(img);
+      card.appendChild(createDownloadButton(photo.src));
 
       const badge = document.createElement("span");
       badge.className = "photo-card__badge";
       badge.textContent = photo.album;
-
-      card.appendChild(img);
       card.appendChild(badge);
-      card.addEventListener("click", () => openLightbox(index));
+
+      card.addEventListener("click", (e) => {
+        if (e.target.closest(".photo-card__download")) return;
+        openLightbox(index);
+      });
       card.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -170,6 +297,13 @@
     updateCount();
   }
 
+  function syncLightboxDownload(photo) {
+    if (!els.lightboxDownload || !photo) return;
+    els.lightboxDownload.href = photo.src;
+    els.lightboxDownload.download = fileNameFromSrc(photo.src);
+    els.lightboxDownload.onclick = (e) => downloadPhoto(photo.src, e);
+  }
+
   function openLightbox(index) {
     state.lightboxIndex = index;
     const photo = state.visible[index];
@@ -177,6 +311,7 @@
     els.lightboxImg.src = photo.src;
     els.lightboxImg.alt = photo.album;
     els.lightboxCaption.textContent = photo.album;
+    syncLightboxDownload(photo);
     if (typeof els.lightbox.showModal === "function") {
       els.lightbox.showModal();
     } else {
@@ -190,6 +325,7 @@
     } else {
       els.lightbox.removeAttribute("open");
     }
+    els.lightboxImg.removeAttribute("src");
   }
 
   function stepLightbox(delta) {
@@ -200,12 +336,52 @@
     els.lightboxImg.src = photo.src;
     els.lightboxImg.alt = photo.album;
     els.lightboxCaption.textContent = photo.album;
+    syncLightboxDownload(photo);
+  }
+
+  function preloadBackground(url) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.onload = () => resolve(url);
+      img.onerror = () => resolve(url);
+      img.src = url;
+    });
+  }
+
+  async function loadDeferredMedia() {
+    const heroUrl = HERO_PHOTO;
+    await preloadBackground(heroUrl);
+    if (els.heroBg) {
+      els.heroBg.style.setProperty("--hero-photo", `url("${heroUrl}")`);
+      els.heroBg.classList.add("is-loaded");
+    }
+
+    const aboutTarget = els.aboutBg;
+    if (!aboutTarget) return;
+
+    const aboutObserver = new IntersectionObserver(
+      async (entries, obs) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        obs.disconnect();
+        await preloadBackground(ABOUT_PHOTO);
+        aboutTarget.style.setProperty("--about-photo", `url("${ABOUT_PHOTO}")`);
+        aboutTarget.classList.add("is-loaded");
+      },
+      { rootMargin: "300px 0px" }
+    );
+    aboutObserver.observe(aboutTarget);
   }
 
   function endIntro() {
+    if (els.intro.classList.contains("is-done")) return;
     els.intro.classList.add("is-done");
     els.intro.setAttribute("aria-hidden", "true");
     document.body.classList.remove("is-intro-locked");
+
+    state.galleryReady = true;
+    renderGallery();
+    loadDeferredMedia();
     initMotion();
   }
 
@@ -242,10 +418,16 @@
       });
     });
 
+    let ticking = false;
     window.addEventListener(
       "scroll",
       () => {
-        els.header.classList.toggle("is-scrolled", window.scrollY > 40);
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          els.header.classList.toggle("is-scrolled", window.scrollY > 40);
+          ticking = false;
+        });
       },
       { passive: true }
     );
@@ -271,7 +453,7 @@
     buildCatalog();
     buildFilters();
     applyI18n();
-    renderGallery();
+    if (els.count) els.count.textContent = "";
     bindEvents();
     window.setTimeout(endIntro, INTRO_MS);
   }
