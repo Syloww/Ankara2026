@@ -1,6 +1,16 @@
 {
   "albums": [
     {
+      "id": "Ahmet",
+      "photos": [
+        {
+          "src": "Photos/Ahmet/P1031552.jpg",
+          "width": 2048,
+          "height": 1150
+        }
+      ]
+    },
+    {
       "id": "AllofUs",
       "photos": [
         {
@@ -32,6 +42,11 @@
           "src": "Photos/Busra/P1031433.jpg",
           "width": 5188,
           "height": 2912
+        },
+        {
+          "src": "Photos/Busra/P1031544.jpg",
+          "width": 1882,
+          "height": 3352
         }
       ]
     },
@@ -68,6 +83,21 @@
     {
       "id": "Elvan",
       "photos": [
+        {
+          "src": "Photos/Elvan/P1031477.jpg",
+          "width": 1150,
+          "height": 2048
+        },
+        {
+          "src": "Photos/Elvan/P1031480.jpg",
+          "width": 3368,
+          "height": 6000
+        },
+        {
+          "src": "Photos/Elvan/P1031607.jpg",
+          "width": 1150,
+          "height": 2048
+        },
         {
           "src": "Photos/Elvan/P1031897-2.jpg",
           "width": 1823,
@@ -142,6 +172,11 @@
           "src": "Photos/Quinten/P1031387.jpg",
           "width": 4429,
           "height": 2486
+        },
+        {
+          "src": "Photos/Quinten/P1031572.jpg",
+          "width": 3368,
+          "height": 6000
         }
       ]
     },
@@ -176,5 +211,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-09-14T13:02:21.170Z"
+  "generatedAt": "2026-09-14T13:06:47.862Z"
 }
