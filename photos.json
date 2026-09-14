@@ -1,6 +1,26 @@
 {
   "albums": [
     {
+      "id": "AllofUs",
+      "photos": [
+        {
+          "src": "Photos/AllofUs/P1031669.jpg",
+          "width": 5642,
+          "height": 3167
+        }
+      ]
+    },
+    {
+      "id": "Alpay & Efe & Batm",
+      "photos": [
+        {
+          "src": "Photos/Alpay & Efe & Batm/P1031617.jpg",
+          "width": 4395,
+          "height": 2467
+        }
+      ]
+    },
+    {
       "id": "Busra",
       "photos": [
         {
@@ -104,6 +124,11 @@
       "id": "Kerem",
       "photos": [
         {
+          "src": "Photos/Kerem/P1031638.jpg",
+          "width": 3368,
+          "height": 6000
+        },
+        {
           "src": "Photos/Kerem/P1031936.jpg",
           "width": 6000,
           "height": 3368
@@ -123,6 +148,11 @@
     {
       "id": "Salim",
       "photos": [
+        {
+          "src": "Photos/Salim/P1031613.jpg",
+          "width": 2048,
+          "height": 1150
+        },
         {
           "src": "Photos/Salim/P1031705.jpg",
           "width": 2245,
@@ -146,5 +176,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-09-14T12:48:46.976Z"
+  "generatedAt": "2026-09-14T12:55:02.850Z"
 }
