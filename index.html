@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Galerie photo du projet Erasmus Ankara 2026 — français, anglais, turc."
+    />
+    <title>Ankara 2026 · Erasmus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Intro wow -->
+    <div id="intro" class="intro" aria-hidden="false">
+      <div class="intro__glow intro__glow--a"></div>
+      <div class="intro__glow intro__glow--b"></div>
+      <p class="intro__eyebrow">Erasmus+</p>
+      <h1 class="intro__title">
+        <span class="intro__word" data-delay="0">Ankara</span>
+        <span class="intro__word intro__word--accent" data-delay="1">2026</span>
+      </h1>
+      <p class="intro__sub" data-i18n="heroLead"></p>
+      <button type="button" class="intro__skip" id="skip-intro" data-i18n="skip">
+        Passer l'intro
+      </button>
+    </div>
+
+    <header class="site-header" id="top">
+      <a class="logo" href="#top" data-i18n="brand">Ankara 2026</a>
+      <nav class="nav" aria-label="Navigation">
+        <a href="#galerie" data-i18n="navGallery">Galerie</a>
+        <a href="#projet" data-i18n="navAbout">Projet</a>
+      </nav>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang="fr" class="lang-btn is-active">FR</button>
+        <button type="button" data-lang="en" class="lang-btn">EN</button>
+        <button type="button" data-lang="tr" class="lang-btn">TR</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero parallax -->
+      <section class="hero" aria-label="Hero">
+        <div class="hero__bg rellax" data-rellax-speed="-7"></div>
+        <div class="hero__orb hero__orb--1 rellax" data-rellax-speed="-3"></div>
+        <div class="hero__orb hero__orb--2 rellax" data-rellax-speed="4"></div>
+        <div class="hero__grain"></div>
+
+        <div class="hero__content">
+          <p class="hero__tag wow animate__animated animate__fadeInUp">Erasmus+ · Türkiye</p>
+          <h1 class="hero__title wow animate__animated animate__fadeInUp" data-wow-delay="0.15s">
+            <span data-i18n="heroTitle">Mémoires Erasmus</span>
+          </h1>
+          <p
+            class="hero__lead wow animate__animated animate__fadeInUp"
+            data-wow-delay="0.3s"
+            data-i18n="heroLead"
+          >
+            Une galerie vivante du projet européen à Ankara.
+          </p>
+          <div class="hero__cta wow animate__animated animate__fadeInUp" data-wow-delay="0.45s">
+            <a class="btn btn--primary" href="#galerie" data-i18n="ctaGallery">Explorer les photos</a>
+            <a class="btn btn--ghost" href="#projet" data-i18n="ctaAbout">Le projet</a>
+          </div>
+        </div>
+
+        <a class="scroll-hint" href="#galerie">
+          <span data-i18n="scroll">Défiler</span>
+          <span class="scroll-hint__line" aria-hidden="true"></span>
+        </a>
+      </section>
+
+      <!-- Galerie -->
+      <section class="gallery-section" id="galerie">
+        <div class="section-head wow animate__animated animate__fadeInUp">
+          <p class="section-label" data-i18n="filterLabel">Albums</p>
+          <h2 class="section-title" data-i18n="navGallery">Galerie</h2>
+          <p class="section-hint" id="filter-hint" data-i18n="shuffleHint"></p>
+        </div>
+
+        <div class="filters wow animate__animated animate__fadeInUp" data-wow-delay="0.1s" id="filters" role="toolbar" aria-label="Filtres albums"></div>
+
+        <p class="photo-count" id="photo-count" aria-live="polite"></p>
+
+        <div class="masonry" id="gallery"></div>
+      </section>
+
+      <!-- Projet -->
+      <section class="about" id="projet">
+        <div class="about__parallax rellax" data-rellax-speed="-2" aria-hidden="true"></div>
+        <div class="about__inner wow animate__animated animate__fadeInUp">
+          <p class="section-label">Erasmus+</p>
+          <h2 class="section-title" data-i18n="aboutTitle">Un projet Erasmus+</h2>
+          <p class="about__text" data-i18n="aboutText"></p>
+          <p class="about__partners" data-i18n="aboutPartners"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p data-i18n="footer">Projet Erasmus · Ankara 2026 · Galerie photo</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <dialog class="lightbox" id="lightbox" aria-label="Aperçu photo">
+      <button type="button" class="lightbox__close" id="lightbox-close" data-i18n-aria="lightboxClose">×</button>
+      <button type="button" class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" data-i18n-aria="lightboxPrev">‹</button>
+      <img id="lightbox-img" alt="" />
+      <p class="lightbox__caption" id="lightbox-caption"></p>
+      <button type="button" class="lightbox__nav lightbox__nav--next" id="lightbox-next" data-i18n-aria="lightboxNext">›</button>
+    </dialog>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script src="js/photos-data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
