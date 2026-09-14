@@ -737,31 +737,81 @@ button {
 .about__inner {
   position: relative;
   z-index: 1;
-  max-width: 36rem;
+  max-width: min(40rem, 100%);
 }
 
 .about__text {
-  margin: 0 0 1.5rem;
+  margin: 0 0 2.25rem;
   font-size: 1.05rem;
   line-height: 1.75;
   color: var(--mist-dim);
 }
 
-.about__partners {
-  margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+.partners {
+  margin-top: 0.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(230, 238, 244, 0.12);
+}
+
+.partners__label {
+  margin: 0 0 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--gold);
 }
 
+.partners__cofund {
+  margin: 0 0 1.25rem;
+  max-width: 34rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--mist);
+}
+
+.partners__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.partners__list li {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--mist-dim);
+}
+
+.partners__list li::before {
+  content: "";
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.65rem;
+  border-radius: 50%;
+  background: var(--gold);
+  vertical-align: middle;
+}
+
 /* ——— Footer ——— */
 .site-footer {
-  padding: 2rem clamp(1.25rem, 5vw, 4rem);
+  padding: 2rem clamp(1.25rem, 5vw, 4rem) 2.5rem;
   border-top: 1px solid rgba(230, 238, 244, 0.08);
   text-align: center;
   font-size: 0.8rem;
   color: var(--mist-dim);
+}
+
+.site-footer__disclaimer {
+  margin: 0.85rem auto 0;
+  max-width: 42rem;
+  font-size: 0.68rem;
+  line-height: 1.55;
+  opacity: 0.75;
 }
 
 /* ——— Lightbox ——— */

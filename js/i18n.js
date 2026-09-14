@@ -18,12 +18,16 @@ window.I18N = {
     aboutTitle: "Un projet Erasmus+",
     aboutText:
       "Ce site rassemble les souvenirs photographiques d'une mobilité européenne à Ankara. Chaque album porte le nom d'un dossier — filtrez, explorez, revivez l'aventure.",
-    aboutPartners: "Partenaires européens · Turquie · Échanges culturels",
+    partnersLabel: "Avec le soutien de",
+    partnersCofund:
+      "Co-financé par le programme Erasmus+ de l'Union européenne",
     lightboxClose: "Fermer",
     lightboxPrev: "Précédente",
     lightboxNext: "Suivante",
     download: "Télécharger",
     footer: "Projet Erasmus · Ankara 2026 · Galerie photo",
+    footerDisclaimer:
+      "Ce projet a été financé avec le soutien de l'Union européenne. Le contenu de cette publication n'engage que son auteur et la Commission européenne ne peut être tenue responsable de l'usage qui pourrait être fait des informations qui y figurent.",
     scroll: "Défiler",
   },
   en: {
@@ -45,12 +49,16 @@ window.I18N = {
     aboutTitle: "An Erasmus+ project",
     aboutText:
       "This site gathers photographic memories from a European mobility in Ankara. Each album matches a folder name — filter, explore, relive the journey.",
-    aboutPartners: "European partners · Türkiye · Cultural exchange",
+    partnersLabel: "Made possible by",
+    partnersCofund:
+      "Co-funded by the Erasmus+ programme of the European Union",
     lightboxClose: "Close",
     lightboxPrev: "Previous",
     lightboxNext: "Next",
     download: "Download",
     footer: "Erasmus project · Ankara 2026 · Photo gallery",
+    footerDisclaimer:
+      "This project has been funded with support from the European Union. This publication reflects the views only of the author, and the European Commission cannot be held responsible for any use which may be made of the information contained therein.",
     scroll: "Scroll",
   },
   tr: {
@@ -72,12 +80,16 @@ window.I18N = {
     aboutTitle: "Bir Erasmus+ projesi",
     aboutText:
       "Bu site, Ankara'daki Avrupa hareketliliğinden fotoğraf anılarını bir araya getirir. Her albüm bir klasör adıdır — filtreleyin, keşfedin, yolculuğu yeniden yaşayın.",
-    aboutPartners: "Avrupa ortakları · Türkiye · Kültürel değişim",
+    partnersLabel: "Destekleyenler",
+    partnersCofund:
+      "Avrupa Birliği Erasmus+ programı tarafından ortak finanse edilmiştir",
     lightboxClose: "Kapat",
     lightboxPrev: "Önceki",
     lightboxNext: "Sonraki",
     download: "İndir",
     footer: "Erasmus projesi · Ankara 2026 · Fotoğraf galerisi",
+    footerDisclaimer:
+      "Bu proje Avrupa Birliği'nin desteğiyle finanse edilmiştir. Yayının içeriği yalnızca yazarın görüşlerini yansıtır; Avrupa Komisyonu burada yer alan bilgilerin herhangi bir şekilde kullanılmasından sorumlu tutulamaz.",
     scroll: "Kaydır",
   },
 };
