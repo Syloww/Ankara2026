@@ -9,7 +9,7 @@
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%230a1520'/%3E%3C/svg%3E";
 
   const state = {
-    lang: localStorage.getItem(STORAGE_LANG) || detectLang(),
+    lang: readStoredLang() || detectLang(),
     filter: "all",
     items: [],
     visible: [],
@@ -19,24 +19,24 @@
     galleryReady: false,
   };
 
-  const els = {
-    intro: document.getElementById("intro"),
-    header: document.querySelector(".site-header"),
-    heroBg: document.querySelector(".hero__bg"),
-    aboutBg: document.querySelector(".about__parallax"),
-    filters: document.getElementById("filters"),
-    gallery: document.getElementById("gallery"),
-    hint: document.getElementById("filter-hint"),
-    count: document.getElementById("photo-count"),
-    lightbox: document.getElementById("lightbox"),
-    lightboxImg: document.getElementById("lightbox-img"),
-    lightboxCaption: document.getElementById("lightbox-caption"),
-    lightboxDownload: document.getElementById("lightbox-download"),
-    lightboxClose: document.getElementById("lightbox-close"),
-    lightboxPrev: document.getElementById("lightbox-prev"),
-    lightboxNext: document.getElementById("lightbox-next"),
-    langBtns: document.querySelectorAll(".lang-btn"),
-  };
+  /** @type {Record<string, any>} */
+  let els = {};
+
+  function readStoredLang() {
+    try {
+      return localStorage.getItem(STORAGE_LANG);
+    } catch {
+      return null;
+    }
+  }
+
+  function writeStoredLang(lang) {
+    try {
+      localStorage.setItem(STORAGE_LANG, lang);
+    } catch {
+      /* ignore */
+    }
+  }
 
   function detectLang() {
     const nav = (navigator.language || "fr").slice(0, 2).toLowerCase();
@@ -44,9 +44,35 @@
     return "fr";
   }
 
+  function cacheElements() {
+    els = {
+      intro: document.getElementById("intro"),
+      header: document.querySelector(".site-header"),
+      heroBg: document.querySelector(".hero__bg"),
+      aboutBg: document.querySelector(".about__parallax"),
+      filters: document.getElementById("filters"),
+      gallery: document.getElementById("gallery"),
+      hint: document.getElementById("filter-hint"),
+      count: document.getElementById("photo-count"),
+      lightbox: document.getElementById("lightbox"),
+      lightboxImg: document.getElementById("lightbox-img"),
+      lightboxCaption: document.getElementById("lightbox-caption"),
+      lightboxDownload: document.getElementById("lightbox-download"),
+      lightboxClose: document.getElementById("lightbox-close"),
+      lightboxPrev: document.getElementById("lightbox-prev"),
+      lightboxNext: document.getElementById("lightbox-next"),
+      langBtns: document.querySelectorAll(".lang-btn"),
+    };
+  }
+
+  function on(el, event, handler, options) {
+    if (!el || typeof el.addEventListener !== "function") return;
+    el.addEventListener(event, handler, options);
+  }
+
   function t(key) {
-    const dict = window.I18N[state.lang] || window.I18N.fr;
-    return dict[key] || window.I18N.fr[key] || key;
+    const dict = (window.I18N && window.I18N[state.lang]) || (window.I18N && window.I18N.fr) || {};
+    return dict[key] || (window.I18N && window.I18N.fr && window.I18N.fr[key]) || key;
   }
 
   function fileNameFromSrc(src) {
@@ -70,11 +96,13 @@
     els.langBtns.forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.lang === state.lang);
     });
-    els.gallery.querySelectorAll(".photo-card__download").forEach((btn) => {
-      btn.setAttribute("aria-label", t("download"));
-      const label = btn.querySelector(".photo-card__download-label");
-      if (label) label.textContent = t("download");
-    });
+    if (els.gallery) {
+      els.gallery.querySelectorAll(".photo-card__download").forEach((btn) => {
+        btn.setAttribute("aria-label", t("download"));
+        const label = btn.querySelector(".photo-card__download-label");
+        if (label) label.textContent = t("download");
+      });
+    }
     updateHint();
     updateCount();
   }
@@ -89,7 +117,7 @@
   }
 
   function buildCatalog() {
-    const albums = window.PHOTOS_DATA?.albums || [];
+    const albums = (window.PHOTOS_DATA && window.PHOTOS_DATA.albums) || [];
     const items = [];
     albums.forEach((album) => {
       (album.photos || []).forEach((src) => {
@@ -100,7 +128,8 @@
   }
 
   function buildFilters() {
-    const albums = window.PHOTOS_DATA?.albums || [];
+    if (!els.filters) return;
+    const albums = (window.PHOTOS_DATA && window.PHOTOS_DATA.albums) || [];
     els.filters.innerHTML = "";
 
     const allBtn = document.createElement("button");
@@ -108,7 +137,7 @@
     allBtn.className = "filter-btn is-active";
     allBtn.dataset.filter = "all";
     allBtn.textContent = t("filterAll");
-    allBtn.addEventListener("click", () => setFilter("all"));
+    on(allBtn, "click", () => setFilter("all"));
     els.filters.appendChild(allBtn);
 
     albums.forEach((album) => {
@@ -117,21 +146,24 @@
       btn.className = "filter-btn";
       btn.dataset.filter = album.id;
       btn.textContent = album.id;
-      btn.addEventListener("click", () => setFilter(album.id));
+      on(btn, "click", () => setFilter(album.id));
       els.filters.appendChild(btn);
     });
   }
 
   function refreshFilterLabels() {
+    if (!els.filters) return;
     const allBtn = els.filters.querySelector('[data-filter="all"]');
     if (allBtn) allBtn.textContent = t("filterAll");
   }
 
   function setFilter(id) {
     state.filter = id;
-    els.filters.querySelectorAll(".filter-btn").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.filter === id);
-    });
+    if (els.filters) {
+      els.filters.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.classList.toggle("is-active", btn.dataset.filter === id);
+      });
+    }
     updateHint();
     if (state.galleryReady) renderGallery();
   }
@@ -171,10 +203,9 @@
             return;
           }
           const reveal = () => {
-            img.classList.add("is-decoded");
             img.closest(".photo-card")?.classList.add("is-ready");
           };
-          img.addEventListener("load", reveal, { once: true });
+          on(img, "load", reveal, { once: true });
           img.src = src;
           img.removeAttribute("data-src");
           observer.unobserve(img);
@@ -190,7 +221,7 @@
     const reveal = () => {
       img.closest(".photo-card")?.classList.add("is-ready");
     };
-    img.addEventListener("load", reveal, { once: true });
+    on(img, "load", reveal, { once: true });
     img.src = src;
     img.loading = "eager";
     img.fetchPriority = "high";
@@ -231,11 +262,13 @@
     btn.className = "photo-card__download";
     btn.setAttribute("aria-label", t("download"));
     btn.innerHTML = `${downloadIcon()}<span class="photo-card__download-label">${t("download")}</span>`;
-    btn.addEventListener("click", (e) => downloadPhoto(src, e));
+    on(btn, "click", (e) => downloadPhoto(src, e));
     return btn;
   }
 
   function renderGallery() {
+    if (!els.gallery) return;
+
     const list =
       state.filter === "all"
         ? shuffle(state.items)
@@ -280,11 +313,11 @@
       badge.textContent = photo.album;
       card.appendChild(badge);
 
-      card.addEventListener("click", (e) => {
+      on(card, "click", (e) => {
         if (e.target.closest(".photo-card__download")) return;
         openLightbox(index);
       });
-      card.addEventListener("keydown", (e) => {
+      on(card, "keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           openLightbox(index);
@@ -305,12 +338,13 @@
   }
 
   function openLightbox(index) {
+    if (!els.lightbox || !els.lightboxImg) return;
     state.lightboxIndex = index;
     const photo = state.visible[index];
     if (!photo) return;
     els.lightboxImg.src = photo.src;
     els.lightboxImg.alt = photo.album;
-    els.lightboxCaption.textContent = photo.album;
+    if (els.lightboxCaption) els.lightboxCaption.textContent = photo.album;
     syncLightboxDownload(photo);
     if (typeof els.lightbox.showModal === "function") {
       els.lightbox.showModal();
@@ -320,22 +354,23 @@
   }
 
   function closeLightbox() {
+    if (!els.lightbox) return;
     if (typeof els.lightbox.close === "function") {
       els.lightbox.close();
     } else {
       els.lightbox.removeAttribute("open");
     }
-    els.lightboxImg.removeAttribute("src");
+    if (els.lightboxImg) els.lightboxImg.removeAttribute("src");
   }
 
   function stepLightbox(delta) {
-    if (!state.visible.length) return;
+    if (!state.visible.length || !els.lightboxImg) return;
     const len = state.visible.length;
     state.lightboxIndex = (state.lightboxIndex + delta + len) % len;
     const photo = state.visible[state.lightboxIndex];
     els.lightboxImg.src = photo.src;
     els.lightboxImg.alt = photo.album;
-    els.lightboxCaption.textContent = photo.album;
+    if (els.lightboxCaption) els.lightboxCaption.textContent = photo.album;
     syncLightboxDownload(photo);
   }
 
@@ -350,15 +385,21 @@
   }
 
   async function loadDeferredMedia() {
-    const heroUrl = HERO_PHOTO;
-    await preloadBackground(heroUrl);
+    await preloadBackground(HERO_PHOTO);
     if (els.heroBg) {
-      els.heroBg.style.setProperty("--hero-photo", `url("${heroUrl}")`);
+      els.heroBg.style.setProperty("--hero-photo", `url("${HERO_PHOTO}")`);
       els.heroBg.classList.add("is-loaded");
     }
 
     const aboutTarget = els.aboutBg;
-    if (!aboutTarget) return;
+    if (!aboutTarget || !("IntersectionObserver" in window)) {
+      if (aboutTarget) {
+        await preloadBackground(ABOUT_PHOTO);
+        aboutTarget.style.setProperty("--about-photo", `url("${ABOUT_PHOTO}")`);
+        aboutTarget.classList.add("is-loaded");
+      }
+      return;
+    }
 
     const aboutObserver = new IntersectionObserver(
       async (entries, obs) => {
@@ -374,7 +415,7 @@
   }
 
   function endIntro() {
-    if (els.intro.classList.contains("is-done")) return;
+    if (!els.intro || els.intro.classList.contains("is-done")) return;
     els.intro.classList.add("is-done");
     els.intro.setAttribute("aria-hidden", "true");
     document.body.classList.remove("is-intro-locked");
@@ -410,19 +451,20 @@
 
   function bindEvents() {
     els.langBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
+      on(btn, "click", () => {
         state.lang = btn.dataset.lang;
-        localStorage.setItem(STORAGE_LANG, state.lang);
+        writeStoredLang(state.lang);
         applyI18n();
         refreshFilterLabels();
       });
     });
 
     let ticking = false;
-    window.addEventListener(
+    on(
+      window,
       "scroll",
       () => {
-        if (ticking) return;
+        if (ticking || !els.header) return;
         ticking = true;
         requestAnimationFrame(() => {
           els.header.classList.toggle("is-scrolled", window.scrollY > 40);
@@ -432,16 +474,15 @@
       { passive: true }
     );
 
-    els.lightboxClose.addEventListener("click", closeLightbox);
-    els.lightboxPrev.addEventListener("click", () => stepLightbox(-1));
-    els.lightboxNext.addEventListener("click", () => stepLightbox(1));
-
-    els.lightbox.addEventListener("click", (e) => {
+    on(els.lightboxClose, "click", closeLightbox);
+    on(els.lightboxPrev, "click", () => stepLightbox(-1));
+    on(els.lightboxNext, "click", () => stepLightbox(1));
+    on(els.lightbox, "click", (e) => {
       if (e.target === els.lightbox) closeLightbox();
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (!els.lightbox.open) return;
+    on(document, "keydown", (e) => {
+      if (!els.lightbox || !els.lightbox.open) return;
       if (e.key === "Escape") closeLightbox();
       if (e.key === "ArrowLeft") stepLightbox(-1);
       if (e.key === "ArrowRight") stepLightbox(1);
@@ -449,6 +490,7 @@
   }
 
   function init() {
+    cacheElements();
     document.body.classList.add("is-intro-locked");
     buildCatalog();
     buildFilters();
