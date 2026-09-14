@@ -21,6 +21,9 @@
     galleryReady: false,
     heroPhoto: null,
     aboutPhoto: null,
+    heroTimer: null,
+    heroIndex: 0,
+    heroActiveSlide: 0,
   };
 
   /** @type {Record<string, any>} */
@@ -79,6 +82,7 @@
       intro: document.getElementById("intro"),
       header: document.querySelector(".site-header"),
       heroBg: document.querySelector(".hero__bg"),
+      heroSlides: document.querySelectorAll("[data-hero-slide]"),
       aboutBg: document.querySelector(".about__parallax"),
       filters: document.getElementById("filters"),
       gallery: document.getElementById("gallery"),
@@ -461,21 +465,67 @@
     });
   }
 
-  async function loadDeferredMedia() {
-    const hero = state.heroPhoto;
-    const about = state.aboutPhoto;
-    if (!hero) return;
+  function setHeroSlideImage(slideEl, src) {
+    if (!slideEl || !src) return;
+    const absolute = /^https?:\/\//i.test(src)
+      ? src
+      : new URL(src.startsWith("/") ? src : toPublicUrl(src), window.location.origin).href;
+    slideEl.style.backgroundImage = `url("${absolute}")`;
+  }
 
-    const heroGradient =
-      "linear-gradient(160deg, rgba(7, 16, 24, 0.35) 0%, rgba(7, 16, 24, 0.75) 55%, #071018 100%)";
+  async function showHeroSlide(src, slideIndex) {
+    const slides = els.heroSlides;
+    if (!slides || !slides.length) return;
+    const target = slides[slideIndex];
+    await preloadBackground(src);
+    setHeroSlideImage(target, src);
+    slides.forEach((slide, i) => {
+      slide.classList.toggle("is-active", i === slideIndex);
+    });
+    state.heroActiveSlide = slideIndex;
+  }
+
+  function stopHeroSlideshow() {
+    if (state.heroTimer) {
+      window.clearInterval(state.heroTimer);
+      state.heroTimer = null;
+    }
+  }
+
+  async function startHeroSlideshow() {
+    stopHeroSlideshow();
+    const pool = shuffle(state.items.map((item) => item.src));
+    if (!pool.length || !els.heroSlides || !els.heroSlides.length) return;
+
+    state.heroIndex = 0;
+    await showHeroSlide(pool[0], 0);
+    if (els.heroBg) els.heroBg.classList.add("is-loaded");
+
+    if (
+      pool.length < 2 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    // Précharge la suivante
+    preloadBackground(pool[1 % pool.length]);
+
+    state.heroTimer = window.setInterval(() => {
+      state.heroIndex = (state.heroIndex + 1) % pool.length;
+      const nextSlide = state.heroActiveSlide === 0 ? 1 : 0;
+      const src = pool[state.heroIndex];
+      showHeroSlide(src, nextSlide);
+      preloadBackground(pool[(state.heroIndex + 1) % pool.length]);
+    }, 2000);
+  }
+
+  async function loadDeferredMedia() {
+    const about = state.aboutPhoto;
     const aboutGradient =
       "linear-gradient(to right, rgba(7, 16, 24, 0.92) 0%, rgba(7, 16, 24, 0.55) 100%)";
 
-    await preloadBackground(hero);
-    if (els.heroBg) {
-      els.heroBg.style.backgroundImage = `${heroGradient}, ${toCssImage(hero)}`;
-      els.heroBg.classList.add("is-loaded");
-    }
+    await startHeroSlideshow();
 
     const aboutTarget = els.aboutBg;
     if (!aboutTarget || !about) return;

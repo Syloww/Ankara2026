@@ -286,12 +286,38 @@ button {
 .hero__bg {
   position: absolute;
   inset: -15% 0 -15%;
-  background:
-    linear-gradient(160deg, rgba(7, 16, 24, 0.35) 0%, rgba(7, 16, 24, 0.75) 55%, var(--ink) 100%);
+  overflow: hidden;
+  will-change: transform;
+  background: var(--ink);
+}
+
+.hero__slide {
+  position: absolute;
+  inset: 0;
+  background-color: #0a1520;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  will-change: transform;
+  opacity: 0;
+  transition: opacity 1.1s ease;
+  will-change: opacity;
+}
+
+.hero__slide.is-active {
+  opacity: 1;
+}
+
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    160deg,
+    rgba(7, 16, 24, 0.35) 0%,
+    rgba(7, 16, 24, 0.75) 55%,
+    var(--ink) 100%
+  );
 }
 
 .hero__orb {
@@ -804,6 +830,10 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero__slide {
+    transition: none;
+  }
+
   *,
   *::before,
   *::after {
