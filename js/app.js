@@ -90,8 +90,6 @@
       count: document.getElementById("photo-count"),
       lightbox: document.getElementById("lightbox"),
       lightboxImg: document.getElementById("lightbox-img"),
-      lightboxCaption: document.getElementById("lightbox-caption"),
-      lightboxDownload: document.getElementById("lightbox-download"),
       lightboxClose: document.getElementById("lightbox-close"),
       lightboxPrev: document.getElementById("lightbox-prev"),
       lightboxNext: document.getElementById("lightbox-next"),
@@ -446,22 +444,14 @@
     updateCount();
   }
 
-  function syncLightboxDownload(photo) {
-    if (!els.lightboxDownload || !photo) return;
-    els.lightboxDownload.href = photo.src;
-    els.lightboxDownload.download = fileNameFromSrc(photo.src);
-    els.lightboxDownload.onclick = (e) => downloadPhoto(photo.src, e);
-  }
-
   function openLightbox(index) {
     if (!els.lightbox || !els.lightboxImg) return;
     state.lightboxIndex = index;
     const photo = state.visible[index];
     if (!photo) return;
     els.lightboxImg.src = photo.src;
-    els.lightboxImg.alt = photo.album;
-    if (els.lightboxCaption) els.lightboxCaption.textContent = photo.album;
-    syncLightboxDownload(photo);
+    els.lightboxImg.alt = photo.album || "";
+    document.body.classList.add("is-lightbox-open");
     if (typeof els.lightbox.showModal === "function") {
       els.lightbox.showModal();
     } else {
@@ -476,6 +466,7 @@
     } else {
       els.lightbox.removeAttribute("open");
     }
+    document.body.classList.remove("is-lightbox-open");
     if (els.lightboxImg) els.lightboxImg.removeAttribute("src");
   }
 
@@ -485,9 +476,7 @@
     state.lightboxIndex = (state.lightboxIndex + delta + len) % len;
     const photo = state.visible[state.lightboxIndex];
     els.lightboxImg.src = photo.src;
-    els.lightboxImg.alt = photo.album;
-    if (els.lightboxCaption) els.lightboxCaption.textContent = photo.album;
-    syncLightboxDownload(photo);
+    els.lightboxImg.alt = photo.album || "";
   }
 
   function preloadBackground(url) {
@@ -652,6 +641,10 @@
     on(els.lightboxNext, "click", () => stepLightbox(1));
     on(els.lightbox, "click", (e) => {
       if (e.target === els.lightbox) closeLightbox();
+    });
+
+    on(els.lightbox, "close", () => {
+      document.body.classList.remove("is-lightbox-open");
     });
 
     on(document, "keydown", (e) => {
