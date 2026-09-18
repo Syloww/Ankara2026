@@ -22,7 +22,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
     />
-    <link rel="stylesheet" href="css/styles.css?v=13" />
+    <link rel="stylesheet" href="css/styles.css?v=14" />
   </head>
   <body>
     <!-- Intro wow -->
@@ -43,6 +43,7 @@
       <a class="logo" href="#top" data-i18n="brand">Ankara 2026</a>
       <nav class="nav" aria-label="Navigation">
         <a href="#galerie" data-i18n="navGallery">Galerie</a>
+        <a href="#vlog" data-i18n="navVlog">Vlog</a>
         <a href="#projet" data-i18n="navAbout">Projet</a>
       </nav>
       <div class="lang-switch" role="group" aria-label="Language">
@@ -94,6 +95,29 @@
         <div class="masonry" id="gallery"></div>
       </section>
 
+      <!-- Vlog YouTube (hors galerie) -->
+      <section class="vlog-section" id="vlog">
+        <div class="vlog-section__inner">
+          <div class="section-head wow animate__animated animate__fadeInUp">
+            <p class="section-label" data-i18n="vlogLabel">Vidéo</p>
+            <h2 class="section-title" data-i18n="vlogTitle">Le vlog</h2>
+            <p class="section-hint" data-i18n="vlogHint">
+              Revivez le voyage en images animées.
+            </p>
+          </div>
+          <div class="vlog-embed wow animate__animated animate__fadeInUp" data-wow-delay="0.1s">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/MnNZUqqhhp4"
+              title="Ankara 2026 · Vlog Erasmus"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+        </div>
+      </section>
+
       <!-- Projet -->
       <section class="about" id="projet">
         <div class="about__parallax rellax" data-rellax-speed="-2" aria-hidden="true"></div>
@@ -135,7 +159,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" defer></script>
-    <script src="js/i18n.js?v=13" defer></script>
+    <script src="js/i18n.js?v=14" defer></script>
     <script src="js/app.js?v=14" defer></script>
   </body>
 </html>
